@@ -29,7 +29,6 @@ def highlightFace(net, frame, conf_threshold=0.7):
             cv2.rectangle(frameOpencvDnn, (x1, y1), (x2, y2), (0, 255, 0), int(round(frameHeight/150)), 8)
     return frameOpencvDnn, faceBoxes
 
-
 def gen_frames():
     faceProto = "C:\\Users\\Mallem Kondaiah\\OneDrive\\Desktop\\projects\\Age-and-Gender-Detection-Using-Deep-Learning-Flask-Project\\Age and Gender Detection Using Deep Learning Flask Project\\opencv_face_detector_uint8.pb"
     faceModel = "C:\\Users\\Mallem Kondaiah\\OneDrive\\Desktop\\projects\\Age-and-Gender-Detection-Using-Deep-Learning-Flask-Project\\Age and Gender Detection Using Deep Learning Flask Project\\opencv_face_detector.pbtxt"
@@ -61,9 +60,6 @@ def gen_frames():
         for faceBox in faceBoxes:
             face = frame[max(0, faceBox[1]-padding):min(faceBox[3]+padding, frame.shape[0]-1), 
                          max(0, faceBox[0]-padding):min(faceBox[2]+padding, frame.shape[1]-1)]
-            if face.size == 0:
-                continue  # Skip empty face
-
             blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
             genderNet.setInput(blob)
             genderPreds = genderNet.forward()
@@ -107,9 +103,6 @@ def gen_frames_photo(img_file):
     for faceBox in faceBoxes:
         face = frame[max(0, faceBox[1]-padding):min(faceBox[3]+padding, frame.shape[0]-1), 
                      max(0, faceBox[0]-padding):min(faceBox[2]+padding, frame.shape[1]-1)]
-        if face.size == 0:
-            continue  # Skip empty face
-
         blob = cv2.dnn.blobFromImage(face, 1.0, (227, 227), MODEL_MEAN_VALUES, swapRB=False)
         genderNet.setInput(blob)
         genderPreds = genderNet.forward()
@@ -124,12 +117,10 @@ def gen_frames_photo(img_file):
     ret, encodedImg = cv2.imencode('.jpg', resultImg)
     return (b'--frame\r\n'
             b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encodedImg) + b'\r\n')
-    
-    
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('Age and Gender Detection Using Deep Learning Flask Project/templates/index.html')
 
 @app.route('/video_feed')
 def video_feed():
@@ -137,7 +128,7 @@ def video_feed():
 
 @app.route('/webcam')
 def webcam():
-    return render_template('webcam.html')
+    return render_template('')
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
